@@ -1,0 +1,134 @@
+---
+title: "Git Integration in Athas: Diffs, Staging, and GitHub"
+description: "Manage your Git workflow in Athas — stage changes, commit, view diffs, browse history, manage worktrees, and track GitHub pull requests and Actions."
+---
+
+Athas includes a full Git integration that keeps you inside the editor for the entire version control workflow. The Git panel provides tabs for staged and unstaged changes, commit history, and worktrees. An inline blame overlay and gutter indicators surface authorship directly in the editor, and a GitHub integration surfaces pull requests, issues, and Actions without leaving Athas.
+
+<CardGroup cols={2}>
+  <Card title="Changes panel" icon="code-branch">
+    View staged, unstaged, and untracked files. Stage or unstage with a click and commit directly from the panel.
+  </Card>
+  <Card title="Diff viewer" icon="left-right">
+    Review changes in unified or split view before committing. Click any changed file to open its diff.
+  </Card>
+  <Card title="Inline Git blame" icon="user-clock">
+    See the last commit author and message for each line directly in the editor margin.
+  </Card>
+  <Card title="Git gutter" icon="sidebar">
+    Color-coded gutter indicators show added, modified, and deleted lines at a glance.
+  </Card>
+  <Card title="Worktree management" icon="sitemap">
+    Create and switch between Git worktrees from the dedicated Worktrees tab.
+  </Card>
+  <Card title="GitHub integration" icon="github">
+    Browse pull requests, issues, and Actions status for your repository inside Athas.
+  </Card>
+</CardGroup>
+
+## Git panel
+
+The Git panel organizes repository information across three tabs. The default tab order is **Changes**, **History**, and **Worktrees**, which matches the `gitSidebarTabOrder` setting:
+
+```json
+{
+  "gitSidebarTabOrder": ["changes", "history", "worktrees"]
+}
+```
+
+You can reorder tabs in **Settings** if you prefer a different arrangement.
+
+### Changes tab
+
+The Changes tab lists every modified file grouped by status: staged, unstaged, and untracked. Each file shows its Git status badge (modified, added, deleted, renamed, or conflicted).
+
+- Click the **+** icon next to a file to stage it.
+- Click the **−** icon next to a staged file to unstage it.
+- Use the **Stage all** and **Unstage all** buttons to move all files at once.
+- Untracked files appear when `showUntrackedFiles` is `true` (the default).
+- The `showStagedFirst` setting (default `true`) groups staged files at the top of the list.
+
+After staging your changes, type a commit message and click **Commit**.
+
+### History tab
+
+The History tab shows the commit log for the current branch. Each entry displays the commit hash, author, date, and message. Click a commit to view its full diff.
+
+### Worktrees tab
+
+The Worktrees tab lists all Git worktrees associated with the repository. You can create a new worktree or switch to an existing one directly from this tab without touching the command line.
+
+## Diff viewer
+
+Athas opens a diff view when you click a changed file in the Changes tab. Two layouts are available:
+
+| Layout | Setting value | Description |
+|---|---|---|
+| Unified | `"unified"` | Single-pane view with additions and deletions interleaved |
+| Split | `"split"` | Two-pane view with the old version on the left and the new version on the right |
+
+The default is unified:
+
+```json
+{
+  "gitDefaultDiffView": "unified"
+}
+```
+
+Switch between layouts using the toggle in the diff toolbar, or change the default in **Settings**.
+
+## Inline Git blame
+
+When `enableInlineGitBlame` is `true`, hovering over a line in the editor shows the commit that last modified it — including the author name, relative date, and commit message. This is useful for understanding why a particular line exists without opening a separate blame view.
+
+```json
+{
+  "enableInlineGitBlame": true
+}
+```
+
+## Git gutter
+
+The Git gutter renders colored markers in the editor's line number area to indicate which lines have changed relative to the last commit:
+
+- **Green bar** — line added
+- **Blue bar** — line modified
+- **Red triangle** — line deleted above this position
+
+Enable or disable the gutter with the `enableGitGutter` setting (default `true`).
+
+## Auto-refresh
+
+Athas watches the repository for external changes — such as a `git pull` run in a terminal — and refreshes the Git panel automatically. You can disable this with `autoRefreshGitStatus`:
+
+```json
+{
+  "autoRefreshGitStatus": true
+}
+```
+
+## GitHub integration
+
+The GitHub sidebar section shows live data from your repository's GitHub remote. Three sections are available:
+
+| Section | Setting | Default |
+|---|---|---|
+| Pull requests | `showGitHubPullRequests` | `true` |
+| Issues | `showGitHubIssues` | `true` |
+| Actions | `showGitHubActions` | `true` |
+
+The display order follows `githubSidebarSectionOrder`:
+
+```json
+{
+  "githubSidebarSectionOrder": ["pull-requests", "issues", "actions"]
+}
+```
+
+<Note>
+GitHub integration requires authentication. Connect your GitHub account from **Settings > Integrations** to enable pull request, issue, and Actions data.
+</Note>
+
+## File tree indicators
+
+When `showGitStatusInFileTree` is `true`, modified files in the file tree display colored status badges so you can see what has changed without opening the Git panel. Compact badges can be enabled with `compactGitStatusBadges` to reduce visual noise.

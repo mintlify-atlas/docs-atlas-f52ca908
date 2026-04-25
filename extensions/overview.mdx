@@ -1,0 +1,155 @@
+---
+title: "Athas Extension System: Languages, Themes, and UI Tools"
+description: "Athas extensions add language intelligence, visual themes, keybindings, and UI contributions. Learn how the manifest structure and enterprise policy work."
+---
+
+Athas uses an extension system to deliver language support, visual themes, keybinding packages, code snippets, linters, formatters, and custom UI contributions. Extensions are defined by a manifest that describes everything the editor needs to activate them — from LSP server paths to Tree-sitter grammar files. Some extensions ship bundled with Athas; others are downloaded from the extensions server on demand.
+
+## Extension categories
+
+Every extension declares one or more categories in its manifest. These categories determine how the extension appears in the Extensions panel and what capabilities Athas expects it to provide.
+
+<CardGroup cols={2}>
+  <Card title="Language" icon="code">
+    Provides syntax highlighting via Tree-sitter grammars, language configuration, and optionally LSP-based code intelligence for a programming language.
+  </Card>
+  <Card title="Linter" icon="triangle-alert">
+    Integrates an external linter process. Athas invokes the linter on save (or on type) and maps its output to editor diagnostics using LSP or regex format parsers.
+  </Card>
+  <Card title="Formatter" icon="wand-magic-sparkles">
+    Integrates an external formatter. Athas pipes file content to the formatter via stdin or a temp file and applies the result back to the editor on save.
+  </Card>
+  <Card title="Theme" icon="palette">
+    Supplies a visual color theme applied across the editor, sidebar, terminal, and UI chrome.
+  </Card>
+  <Card title="Keymaps" icon="keyboard">
+    Packages a set of keybindings that replicate familiar shortcuts from another editor, such as VS Code, JetBrains, Sublime Text, or Emacs.
+  </Card>
+  <Card title="Snippets" icon="file-code">
+    Ships collections of code snippets scoped to one or more language IDs. Snippets appear in the editor's completion menu when typing their prefix.
+  </Card>
+  <Card title="UI" icon="layout-panel-left">
+    Contributes sidebar views, toolbar actions, and context menu entries through the `contributes` field in the manifest.
+  </Card>
+  <Card title="Other" icon="box">
+    A catch-all for extensions that don't fit neatly into the categories above.
+  </Card>
+</CardGroup>
+
+## Extension manifest structure
+
+Every extension is described by an `ExtensionManifest` object. Athas reads this manifest to determine what the extension provides and how to activate it.
+
+```typescript
+export interface ExtensionManifest {
+  // Core metadata
+  id: string;          // Unique identifier (e.g., "athas.rust")
+  name: string;        // Short name (e.g., "Rust")
+  displayName: string; // Human-readable name shown in the UI
+  description: string;
+  version: string;
+  publisher: string;
+
+  // Categories this extension belongs to
+  categories: ExtensionCategory[];
+
+  // Language contributions (file extensions, aliases, filenames)
+  languages?: LanguageContribution[];
+
+  // LSP server configuration
+  lsp?: LspConfiguration;
+
+  // Tree-sitter grammar (WASM + scope name)
+  grammar?: GrammarConfiguration;
+
+  // External formatter configuration
+  formatter?: FormatterConfiguration;
+
+  // External linter configuration
+  linter?: LinterConfiguration;
+
+  // Code snippet collections
+  snippets?: SnippetContribution[];
+
+  // Commands contributed by this extension
+  commands?: CommandContribution[];
+
+  // Keybinding contributions
+  keybindings?: KeybindingContribution[];
+
+  // UI contributions (sidebar views, toolbar actions, menus)
+  contributes?: UIContributions;
+
+  // Extension entry point (for custom extension code)
+  main?: string;
+
+  // Icon, license, repository
+  icon?: string;
+  license?: string;
+  repository?: { type: string; url: string };
+
+  // Download and checksum metadata for installable extensions
+  installation?: InstallationMetadata;
+
+  // Activation triggers (e.g., "onLanguage:rust")
+  activationEvents?: string[];
+
+  // External package dependencies
+  dependencies?: Record<string, string>;
+}
+```
+
+### Extension categories type
+
+```typescript
+export type ExtensionCategory =
+  | "Language"
+  | "Linter"
+  | "Formatter"
+  | "Theme"
+  | "Keymaps"
+  | "Snippets"
+  | "UI"
+  | "Other";
+```
+
+## Bundled vs. installable extensions
+
+Athas ships with a small set of bundled extensions for themes and icon themes. These are embedded in the application bundle and are always available without an internet connection. Their `isBundled` flag is `true` in the registry, and their initial state is `"installed"`.
+
+Language extensions — including LSP servers, grammars, formatters, and linters — are **not bundled**. They are fetched from the Athas extensions CDN (`https://athas.dev/extensions`) and installed on demand. The CDN serves a `manifests.json` index that the editor fetches at startup; individual extension packages are downloaded only when you install them from the Extensions panel.
+
+<Info>
+  Language extensions that include native binaries (such as LSP servers) are distributed as platform- and architecture-specific packages. Athas automatically selects the correct package for your operating system and CPU architecture.
+</Info>
+
+## Enterprise extension policy
+
+Organizations that run Athas under an enterprise subscription can control which extensions users are allowed to install. Three settings govern this behavior:
+
+| Setting | Type | Description |
+|---|---|---|
+| `enterpriseManagedMode` | `boolean` | When `true`, indicates the installation is managed by an organization. |
+| `enterpriseRequireExtensionAllowlist` | `boolean` | When `true`, Athas blocks installation of any extension whose ID is not in the allowlist. |
+| `enterpriseAllowedExtensionIds` | `string[]` | The list of extension IDs that users are permitted to install. |
+
+<Warning>
+  If `enterpriseRequireExtensionAllowlist` is enabled and an extension ID is not in `enterpriseAllowedExtensionIds`, Athas will block both installation and updates for that extension. The same policy also applies to update operations.
+</Warning>
+
+The allowlist check is case-insensitive and trims whitespace from IDs before comparison. Extensions that are already bundled with the application are unaffected by the allowlist.
+
+## UI contributions
+
+Extensions in the `UI` category can contribute additional interface elements through the `contributes` field:
+
+```typescript
+export interface UIContributions {
+  sidebarViews?: SidebarViewContribution[];    // New panels in the activity bar
+  toolbarActions?: ToolbarActionContribution[]; // Buttons in the header toolbar
+  commands?: CommandContribution[];            // Commands for the command palette
+  menus?: MenuContribution[];                  // Items in context menus
+}
+```
+
+Each toolbar action specifies a `position` of `"left"` or `"right"` and an optional `when` condition that controls visibility based on editor context.

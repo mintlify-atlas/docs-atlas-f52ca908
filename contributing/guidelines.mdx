@@ -1,0 +1,224 @@
+---
+title: 'Code Style, Commits, and Contribution Standards for Athas'
+description: 'Code organization, naming conventions, React and Zustand patterns, commit standards, and the pre-submission checklist for Athas contributors.'
+---
+
+Athas follows a consistent set of conventions across both its TypeScript frontend and Rust backend. Reading these guidelines before writing code will save you revision rounds and help your pull request get merged faster. The rules below are drawn directly from `AGENTS.md` and `CONTRIBUTING.md` in the repository.
+
+## Overview
+
+<CardGroup cols={2}>
+  <Card title="Code organization" icon="folder">
+    Where feature code, shared utilities, extensions, and Rust crates live in the project tree.
+  </Card>
+  <Card title="Code style" icon="pen-line">
+    File naming, Tailwind usage, CSS variables, accessibility, and when to use `cn()`.
+  </Card>
+  <Card title="Zustand stores" icon="database">
+    Required patterns for selectors, actions, cross-store access, and deep updates.
+  </Card>
+  <Card title="Commits and branches" icon="git-branch">
+    Commit message format, branch naming, and the pre-submission checklist.
+  </Card>
+</CardGroup>
+
+## Code organization
+
+All frontend code is organized by feature. Place new code in the most specific location that applies.
+
+<AccordionGroup>
+  <Accordion title="Frontend structure">
+    | Path | Purpose |
+    |------|---------|
+    | `src/features/[feature]/` | Feature-specific components, hooks, services, stores, types, utils, and tests |
+    | `src/components` | Reusable UI primitives shared across features |
+    | `src/hooks` | Shared hooks with no feature-specific behavior |
+    | `src/utils` | Genuinely shared helpers with no feature-specific behavior |
+    | `src/extensions/` | Extension and theme implementation |
+
+    Features with distinct subfeatures get a dedicated nested folder. Keep components, hooks, and helpers close to the subfeature rather than scattering them across the feature root. If a file is only used by one subfeature, keep it inside that subfeature folder.
+
+    Specific concerns have fixed homes:
+    - Settings, fonts, themes, and UI preferences: `src/features/settings/`
+    - Keymaps and shortcut logic: `src/features/keymaps/`
+    - Extension and theme implementation: `src/extensions/`
+
+    Do not add feature logic to `src/components`, `src/hooks`, or `src/utils` just because it is convenient — only move code there when it is genuinely shared across features.
+  </Accordion>
+
+  <Accordion title="Rust crate structure">
+    Rust feature logic lives in dedicated workspace crates rather than in `src-tauri`. Keep `src-tauri` focused on app wiring and Tauri integration only.
+
+    Current workspace crates:
+
+    ```
+    crates/
+    ├── runtime/
+    ├── tooling/
+    ├── lsp/
+    ├── remote/
+    ├── project/
+    ├── database/
+    ├── version-control/
+    ├── extensions/
+    ├── terminal/
+    ├── ai/
+    ├── github/
+    └── fff-search/
+    ```
+
+    When adding Rust features, prefer creating or extending a named crate under `crates/[feature]/` over adding logic to `src-tauri`.
+  </Accordion>
+
+  <Accordion title="Test placement">
+    Keep feature tests under `src/features/[feature]/tests/` when practical. Run the full test suite with:
+
+    ```bash
+    bunx vp test run
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Code style
+
+<AccordionGroup>
+  <Accordion title="File naming">
+    Use kebab-case for all file and folder names. Name files after what they actually do rather than using vague names.
+
+    | Good | Avoid |
+    |------|-------|
+    | `settings-dialog.tsx` | `dialog.tsx` |
+    | `use-keymaps.ts` | `helpers.ts` |
+    | `theme-loader.ts` | `misc.ts` or `utils.ts` |
+  </Accordion>
+
+  <Accordion title="React and UI conventions">
+    - Use **Tailwind utilities** for all normal component styling.
+    - Use **CSS variables** for theme colors — never hardcode hex values in UI code.
+    - Keep font sizes, font families, theme colors, keymaps, and shortcuts in their existing system-level homes. Do not redefine them ad hoc in feature components.
+    - Interactive elements must be accessible: provide accessible names for icon-only controls and ensure usable keyboard and focus behavior.
+    - Avoid unnecessary comments in UI components. Prefer self-explanatory code.
+    - Only use `cn(...)` for conditional or merged class names. Remove it when a single static class string suffices.
+  </Accordion>
+</AccordionGroup>
+
+## Zustand store patterns
+
+All stores in Athas follow the same structure. Deviating from these patterns will be flagged in review.
+
+<AccordionGroup>
+  <Accordion title="Required patterns">
+    **`createSelectors` wrapper** — Always wrap stores with `createSelectors` to enable selector-based subscriptions:
+
+    ```typescript
+    export const useMyStore = createSelectors(create<MyStore>()(/* ... */))
+    ```
+
+    **`actions` object** — Group all store mutations inside a single `actions` object rather than placing them at the root of the store:
+
+    ```typescript
+    actions: {
+      setFoo(value: string) { /* ... */ },
+      resetBar() { /* ... */ },
+    }
+    ```
+
+    **`getState()` for cross-store access** — Access other stores inside actions using `getState()` instead of passing dependent state through parameters:
+
+    ```typescript
+    actions: {
+      doSomething() {
+        const other = useOtherStore.getState()
+        // ...
+      }
+    }
+    ```
+
+    **`immer` for deep updates** — Use `immer` when store updates are deeply nested to avoid manual spreading:
+
+    ```typescript
+    import { immer } from 'zustand/middleware/immer'
+
+    create<MyStore>()(immer((set) => ({
+      nested: { value: 0 },
+      actions: {
+        increment: () => set((state) => { state.nested.value++ }),
+      }
+    })))
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Commits and branches
+
+<AccordionGroup>
+  <Accordion title="Commit message format">
+    - Start the commit title with an **uppercase letter**.
+    - Keep titles short, direct, and focused on the outcome of the change.
+    - Write one logical change per commit — do not bundle unrelated changes.
+    - Add a short commit body when the change benefits from extra context. Wrap body lines before the commitlint line-length limit.
+    - End with a `Fixes #123` or `Closes #123` line when applicable.
+    - No emojis, prefixes (e.g., `feat:`, `fix:`), filler words, or changelog-style noise.
+
+    **Good:** `Add autocompletion for import paths`
+
+    **Avoid:** `feat: ✨ added some autocompletion stuff`
+  </Accordion>
+
+  <Accordion title="Branch workflow">
+    - Default to working directly on `master` for routine changes.
+    - If a branch is needed, branch from `master` and use a short, descriptive name.
+    - Keep release tags on `master`. Do not use real `v*` tags to test release automation.
+  </Accordion>
+
+  <Accordion title="Pull request format">
+    Open your PR description with one short sentence summarizing the change, followed by short bullets in the form `Add ... by @username`, `Fix ... by @username`, or `Change ... by @username`. Add `Closes #123` as a bullet when the PR resolves an issue.
+  </Accordion>
+</AccordionGroup>
+
+## Pre-submission checklist
+
+Complete these steps before opening a pull request:
+
+<Steps>
+  <Step title="Run all checks">
+    ```bash
+    bun check
+    ```
+    This runs TypeScript type checking, the linter, tests, and Rust checks in sequence.
+  </Step>
+
+  <Step title="Auto-fix issues">
+    ```bash
+    bun fix
+    ```
+  </Step>
+
+  <Step title="Verify the app runs">
+    ```bash
+    bun dev
+    ```
+    Confirm the app launches and your changes behave as expected.
+  </Step>
+
+  <Step title="Rebase on master">
+    ```bash
+    git rebase origin/master
+    ```
+  </Step>
+
+  <Step title="Squash commits into logical units">
+    Ensure each commit represents one logical change before pushing.
+  </Step>
+</Steps>
+
+## Security and licensing
+
+<CardGroup cols={2}>
+  <Card title="Security policy" icon="shield">
+    For security vulnerabilities, follow the process described in `SECURITY.md` in the repository root. Do not open a public issue for security reports.
+  </Card>
+  <Card title="Contributor License Agreement" icon="file-text">
+    By submitting a pull request you agree to the [Contributor License and Feedback Agreement](https://github.com/athasdev/athas/blob/master/CONTRIBUTOR_LICENSE_AND_FEEDBACK_AGREEMENT.md) included in the repository.
+  </Card>
+</CardGroup>

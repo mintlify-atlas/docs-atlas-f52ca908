@@ -1,0 +1,187 @@
+---
+title: "Keyboard Shortcuts and Keybinding Presets in Athas"
+description: "Switch between built-in shortcut presets modeled on VS Code, JetBrains, Sublime Text, Xcode, Atom, Emacs, and Zed, or define your own custom keybindings."
+---
+
+Athas ships with a full set of built-in keyboard shortcuts and lets you switch to a preset that matches the editor you are most comfortable with. Presets remap the default shortcuts to mirror those of popular editors without changing any behavior — the same commands run, just under different keys.
+
+## Default shortcuts
+
+The following shortcuts are active when no preset is selected (`keybindingPreset: "none"`).
+
+### File operations
+
+| Key | Command |
+|---|---|
+| `cmd+s` | Save file |
+| `cmd+shift+s` | Save file as |
+| `cmd+w` | Close file |
+| `cmd+shift+t` | Reopen closed file |
+| `cmd+o` | Open file |
+| `cmd+p` | Quick open (`file.quickOpen`) |
+
+### Edit operations
+
+| Key | Command |
+|---|---|
+| `cmd+z` | Undo |
+| `cmd+shift+z` / `cmd+y` | Redo |
+| `cmd+c` | Copy |
+| `cmd+x` | Cut |
+| `cmd+v` | Paste |
+| `cmd+d` | Duplicate line |
+| `cmd+shift+k` | Delete line |
+| `cmd+/` | Toggle comment |
+| `alt+up` / `alt+down` | Move line up/down |
+| `alt+shift+up` / `alt+shift+down` | Copy line up/down |
+| `shift+alt+f` | Format document |
+| `cmd+i` | Inline AI edit |
+
+### Navigation
+
+| Key | Command |
+|---|---|
+| `cmd+shift+p` | Command palette |
+| `cmd+g` | Go to line |
+| `F12` | Go to definition |
+| `shift+F12` | Go to references |
+| `cmd+alt+right` / `cmd+alt+left` | Next/previous tab |
+| `ctrl+-` / `ctrl+shift+-` | Navigate back/forward |
+
+### View
+
+| Key | Command |
+|---|---|
+| `cmd+b` | Toggle sidebar |
+| `cmd+j` | Toggle terminal |
+| `cmd+shift+f` | Global search |
+| `cmd+shift+e` | Show file explorer |
+| `cmd+shift+g` | Show source control |
+| `cmd+r` | Toggle AI chat |
+| `cmd+k cmd+t` | Open theme selector |
+| `cmd+k cmd+s` | Open keyboard shortcuts |
+
+## Keybinding presets
+
+Select a preset under **Settings → Keyboard → Keybinding Preset**. Each preset remaps a targeted subset of shortcuts to match the chosen editor; all other shortcuts remain at their Athas defaults.
+
+<AccordionGroup>
+  <Accordion title="None — Athas built-in (default)">
+    No overrides. All shortcuts use Athas defaults as described in the tables above.
+  </Accordion>
+
+  <Accordion title="VS Code">
+    Matches common VS Code shortcuts.
+
+    | Key | Command |
+    |---|---|
+    | `cmd+n` | New file (`file.new`) |
+    | `ctrl+g` | Go to line |
+    | `cmd+alt+f` | Find and replace |
+    | `cmd+shift+m` | Toggle diagnostics panel |
+  </Accordion>
+
+  <Accordion title="JetBrains">
+    Matches common JetBrains IDE shortcuts.
+
+    | Key | Command |
+    |---|---|
+    | `cmd+shift+a` | Command palette |
+    | `cmd+shift+n` | Quick open |
+    | `cmd+l` | Go to line |
+    | `cmd+1` | Show file explorer |
+    | `cmd+9` | Show source control |
+    | `cmd+b` | Go to definition |
+    | `alt+F7` | Go to references |
+    | `cmd+e` | Reopen closed file |
+  </Accordion>
+
+  <Accordion title="Sublime Text">
+    Matches common Sublime Text shortcuts.
+
+    | Key | Command |
+    |---|---|
+    | `cmd+shift+d` | Duplicate line |
+    | `cmd+k cmd+b` | Toggle sidebar |
+    | `cmd+shift+p` | Command palette |
+    | `ctrl+g` | Go to line |
+    | `cmd+shift+f` | Global search |
+  </Accordion>
+
+  <Accordion title="Xcode">
+    Matches common Xcode shortcuts.
+
+    | Key | Command |
+    |---|---|
+    | `cmd+shift+a` | Command palette |
+    | `cmd+shift+o` | Quick open |
+    | `cmd+1` | Show file explorer |
+    | `cmd+5` | Toggle diagnostics panel |
+    | `cmd+0` | Toggle sidebar |
+    | `cmd+shift+f` | Global search |
+    | `cmd+l` | Go to line |
+  </Accordion>
+
+  <Accordion title="Atom">
+    Matches common Atom shortcuts.
+
+    | Key | Command |
+    |---|---|
+    | `cmd+shift+p` | Command palette |
+    | `cmd+\` | Toggle sidebar |
+    | `cmd+shift+f` | Global search |
+    | `cmd+alt+f` | Find and replace |
+    | `ctrl+\`` | Toggle terminal |
+    | `cmd+shift+d` | Duplicate line |
+    | `ctrl+g` | Go to line |
+  </Accordion>
+
+  <Accordion title="Emacs">
+    Matches common Emacs shortcuts.
+
+    | Key | Command |
+    |---|---|
+    | `alt+x` | Command palette |
+    | `ctrl+x ctrl+f` | Open file |
+    | `ctrl+x ctrl+s` | Save file |
+    | `ctrl+x k` | Close file |
+    | `ctrl+/` | Undo |
+    | `alt+w` | Copy |
+    | `ctrl+w` | Cut |
+    | `ctrl+y` | Paste |
+    | `ctrl+s` | Find |
+    | `alt+g g` | Go to line |
+  </Accordion>
+
+  <Accordion title="Zed">
+    Matches common Zed shortcuts.
+
+    | Key | Command |
+    |---|---|
+    | `cmd+shift+p` | Command palette |
+    | `cmd+p` | Quick open |
+    | `cmd+shift+f` | Global search |
+    | `cmd+b` | Toggle sidebar |
+    | `cmd+j` | Toggle terminal |
+    | `cmd+shift+e` | Show file explorer |
+    | `cmd+shift+g` | Show source control |
+  </Accordion>
+</AccordionGroup>
+
+## Custom keybindings
+
+In addition to presets, you can override individual shortcuts through the keyboard shortcuts editor. Open it with `cmd+k cmd+s` or via **Settings → Keyboard → Open Keyboard Shortcuts**.
+
+Each binding targets a command ID (for example, `workbench.commandPalette` or `file.quickOpen`) and an optional `when` condition (such as `editorFocus` or `terminalFocus`) that restricts when the shortcut is active.
+
+<Tip>
+Preset overrides are applied on top of any custom bindings. If you define a custom binding for the same command, your custom binding takes priority over the preset.
+</Tip>
+
+## Key syntax
+
+Athas uses VS Code-style key syntax, automatically normalized per platform:
+
+- `cmd` resolves to `Cmd` on macOS and `Ctrl` on Windows/Linux.
+- Chord shortcuts (two-key sequences) are written with a space: `cmd+k cmd+t`.
+- Modifier order: `ctrl+alt+shift+cmd+key`.

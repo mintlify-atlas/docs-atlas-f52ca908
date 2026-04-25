@@ -1,0 +1,132 @@
+---
+title: 'Set Up Your Local Environment to Contribute to Athas'
+description: 'Install Rust nightly, Bun 1.3.2, and Node.js 22+, then clone the repository and run Athas locally in development mode using Tauri and Vite.'
+---
+
+Athas is a cross-platform desktop code editor built with Tauri, React, TypeScript, and Rust. Before you can run or modify the editor locally, you need a small set of tools installed on your machine. This guide walks through every step from installing prerequisites to verifying your environment is ready.
+
+## Prerequisites
+
+You need three tools installed before cloning the repository:
+
+<CardGroup cols={3}>
+  <Card title="Rust (nightly)" icon="gear" href="https://rustup.rs">
+    Athas pins Rust to the nightly channel via `rust-toolchain.toml`. Install via rustup and the correct toolchain is selected automatically.
+  </Card>
+  <Card title="Bun 1.3.2" icon="box" href="https://bun.sh">
+    Bun is the package manager and script runner for the entire project. Pin to version `1.3.2` exactly as specified in `package.json`.
+  </Card>
+  <Card title="Node.js 22+" icon="code" href="https://nodejs.org">
+    Node.js version 22 or higher is required. It is used alongside Bun for toolchain compatibility.
+  </Card>
+</CardGroup>
+
+## Setting up the project
+
+<Steps>
+  <Step title="Clone the repository">
+    Clone the Athas repository and enter the project directory.
+
+    ```bash
+    git clone https://github.com/athasdev/athas.git
+    cd athas
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    Use Bun to install all JavaScript and TypeScript dependencies. The `postinstall` script runs automatically after installation.
+
+    ```bash
+    bun install
+    ```
+  </Step>
+
+  <Step title="Start the development build">
+    Launch the Tauri development server. This compiles the Rust backend and starts the Vite frontend in watch mode.
+
+    ```bash
+    bun dev
+    ```
+
+    <Note>
+      On Linux, the `WEBKIT_DISABLE_DMABUF_RENDERER` environment variable is set automatically by the dev script to prevent rendering issues with certain WebKit builds.
+    </Note>
+  </Step>
+</Steps>
+
+## Running checks
+
+The `scripts/` directory contains shell and TypeScript scripts that power all validation commands. The top-level `bun check` command runs all checks in sequence: frontend linting and type checking, tests, Zig tooling validation, and Rust checks.
+
+### Full check suite
+
+Run all checks at once before submitting a pull request:
+
+```bash
+bun check
+```
+
+This script executes the following steps in order:
+
+1. Frontend checks (`bun typecheck` + linter)
+2. Tests (`bunx vp test run`)
+3. Zig toolchain check
+4. Rust checks (`bun check:rust`)
+
+### Individual checks
+
+Run individual checks when you are working on a specific part of the codebase:
+
+<CodeGroup>
+
+```bash TypeScript
+bun typecheck
+```
+
+```bash Tests
+bunx vp test run
+```
+
+```bash Rust
+bun check:rust
+```
+
+</CodeGroup>
+
+### Auto-fix and formatting
+
+Auto-fix linting and style issues, then apply code formatting:
+
+<CodeGroup>
+
+```bash Fix issues
+bun fix
+```
+
+```bash Format code
+bun format
+```
+
+</CodeGroup>
+
+<Tip>
+  Run `bun fix` first to resolve auto-fixable issues, then `bun format` only when formatting changes are actually needed.
+</Tip>
+
+## Release validation
+
+If your changes touch the release flow, validate the release script locally before opening a pull request. The `--dry-run` flag runs the full release process without publishing anything.
+
+```bash
+bun scripts/release.ts <bump> --dry-run
+```
+
+Replace `<bump>` with the version bump type: `patch`, `minor`, `major`, `alpha`, `beta`, or `rc`. After the dry run passes, also run:
+
+```bash
+bun release:check
+```
+
+<Warning>
+  Never push real `v*` tags to debug release automation. Use `--dry-run` exclusively for local validation.
+</Warning>

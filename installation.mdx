@@ -1,0 +1,100 @@
+---
+title: "Install Athas on macOS, Linux, and Windows — Download Guide"
+description: "Download and install Athas on your platform. Athas runs natively on macOS (Apple Silicon and Intel), Linux, and Windows with no runtime dependencies."
+---
+
+Athas distributes prebuilt binaries for macOS, Linux, and Windows through the [GitHub releases page](https://github.com/athasdev/athas/releases). There is no package manager installation — download the appropriate file for your platform, install it, and you are ready to go.
+
+<Note>
+  Athas is currently at version 0.4.x. Always download from the [official releases page](https://github.com/athasdev/athas/releases) to get the latest stable build.
+</Note>
+
+## Supported platforms
+
+| Platform | Architecture |
+|----------|-------------|
+| macOS | Apple Silicon (arm64) |
+| macOS | Intel (x86_64) |
+| Linux | x86_64 |
+| Windows | x86_64 |
+
+## Installation
+
+<Tabs>
+  <Tab title="macOS">
+    **Apple Silicon (M-series)**
+
+    1. Go to the [Athas releases page](https://github.com/athasdev/athas/releases).
+    2. Under the latest release, download the file ending in `aarch64.dmg`.
+    3. Open the downloaded `.dmg` file.
+    4. Drag **Athas** into your **Applications** folder.
+    5. Eject the disk image.
+    6. Open Athas from **Applications** or Spotlight.
+
+    **Intel**
+
+    1. Go to the [Athas releases page](https://github.com/athasdev/athas/releases).
+    2. Under the latest release, download the file ending in `x64.dmg`.
+    3. Open the downloaded `.dmg` file.
+    4. Drag **Athas** into your **Applications** folder.
+    5. Eject the disk image.
+    6. Open Athas from **Applications** or Spotlight.
+
+    <Warning>
+      macOS may block Athas on first launch because it was downloaded from the internet. If you see a message that the app cannot be opened, go to **System Settings → Privacy & Security** and click **Open Anyway** next to the Athas entry.
+    </Warning>
+  </Tab>
+  <Tab title="Linux">
+    1. Go to the [Athas releases page](https://github.com/athasdev/athas/releases).
+    2. Under the latest release, download the AppImage or the `.deb` package, depending on your distribution.
+    3. Install the package:
+
+    **AppImage**
+
+    ```bash
+    chmod +x Athas_*.AppImage
+    ./Athas_*.AppImage
+    ```
+
+    **Debian / Ubuntu**
+
+    ```bash
+    sudo dpkg -i athas_*.deb
+    ```
+
+    4. Launch Athas from your application menu or run `athas` from a terminal if the binary is on your PATH.
+
+    <Note>
+      Athas uses WebKit (via Tauri) on Linux. If you encounter rendering issues, try setting the environment variable `WEBKIT_DISABLE_DMABUF_RENDERER=1` before launching.
+    </Note>
+  </Tab>
+  <Tab title="Windows">
+    1. Go to the [Athas releases page](https://github.com/athasdev/athas/releases).
+    2. Under the latest release, download the `.msi` installer.
+    3. Run the installer and follow the on-screen prompts.
+    4. Launch Athas from the Start menu or the desktop shortcut.
+
+    <Warning>
+      Windows SmartScreen may show a warning on first launch. Click **More info → Run anyway** to proceed. Athas is open source and you can review the source code at [github.com/athasdev/athas](https://github.com/athasdev/athas).
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Next steps
+
+Once Athas is installed, open your first project and configure the editor to your preferences.
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Open a project, explore the UI, and set up your first AI chat session.
+  </Card>
+  <Card title="AI features" icon="robot" href="/features/ai">
+    Configure an AI provider and start using chat and autocomplete.
+  </Card>
+  <Card title="Themes" icon="palette" href="/customization/themes">
+    Switch between built-in themes or sync with your system appearance.
+  </Card>
+  <Card title="Vim mode" icon="keyboard" href="/customization/vim-mode">
+    Enable Vim keybindings and configure relative line numbers.
+  </Card>
+</CardGroup>

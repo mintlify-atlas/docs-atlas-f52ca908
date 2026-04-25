@@ -1,0 +1,129 @@
+---
+title: "Vim Mode in Athas: Modal Editing with Registers and Marks"
+description: "Enable full modal Vim editing in Athas with normal, insert, visual, and command modes, named registers, marks, a jump list, and relative line numbers."
+---
+
+Vim mode in Athas is a full modal editing implementation built directly into the editor. It is distinct from the **Vim keybinding preset** — the preset simply remaps a handful of shortcuts to match Vim conventions, while Vim mode replaces the standard keyboard interaction model with a proper modal editing experience covering normal, insert, visual, and command modes.
+
+## Enabling Vim mode
+
+<Steps>
+  <Step title="Open Settings">
+    Press `cmd+,` (macOS) or `ctrl+,` (Windows/Linux) to open Settings.
+  </Step>
+  <Step title="Go to Keyboard">
+    Navigate to the **Keyboard** section in the Settings sidebar.
+  </Step>
+  <Step title="Enable Vim Mode">
+    Toggle **Vim Mode** on. The status indicator in the editor footer will show `NORMAL` to confirm that modal editing is active.
+  </Step>
+</Steps>
+
+The corresponding setting key is `vimMode` (default: `false`).
+
+## Modes
+
+Athas Vim mode tracks four modes:
+
+| Mode | Display | How to enter |
+|---|---|---|
+| Normal | `NORMAL` | Default on activation; press `Esc` from any other mode |
+| Insert | `INSERT` | Press `i`, `a`, `o`, `O`, `I`, `A`, `c{motion}`, or any change operator |
+| Visual | `VISUAL` | Press `v` (character-wise) or `V` (line-wise) in normal mode |
+| Command | `COMMAND` | Press `:` in normal mode |
+
+The current mode is shown in the status indicator at the bottom of the editor. When command mode is active, a command input bar appears.
+
+<Note>
+Switching modes clears the key buffer. For example, entering insert mode cancels any pending operator-motion sequence.
+</Note>
+
+## Motions
+
+The following motions are supported in normal and visual mode:
+
+| Key | Motion |
+|---|---|
+| `h` / `l` | Character left/right |
+| `j` / `k` | Line down/up |
+| `w` / `W` | Word/WORD forward |
+| `b` / `B` | Word/WORD backward |
+| `e` / `E` | Word/WORD end |
+| `ge` | Previous word end |
+| `0` | Line start |
+| `$` | Line end |
+| `^` | First non-blank character |
+| `gg` / `G` | File start/end |
+| `H` / `M` / `L` | Viewport top/middle/bottom |
+| `{` / `}` | Paragraph backward/forward |
+| `%` | Jump to matching bracket |
+| `;` / `,` | Repeat last character find forward/backward |
+
+Motions accept a count prefix. For example, `3w` moves three words forward.
+
+## Operators
+
+Operators act on a range defined by a motion or text object:
+
+| Key | Operator |
+|---|---|
+| `d{motion}` | Delete |
+| `c{motion}` | Change (delete and enter insert mode) |
+| `y{motion}` | Yank (copy) |
+| `>{motion}` | Indent |
+| `<{motion}` | Outdent |
+| `gu{motion}` | Lowercase |
+| `gU{motion}` | Uppercase |
+
+Double the operator to act on the current line: `dd` deletes the current line, `yy` yanks it, and so on.
+
+## Actions
+
+Actions execute immediately without requiring a motion:
+
+| Key | Action |
+|---|---|
+| `p` | Paste after cursor |
+| `P` | Paste before cursor |
+| `J` | Join lines (with space) |
+| `gJ` | Join lines (without space) |
+| `~` | Toggle case |
+| `r{char}` | Replace character under cursor |
+| `.` | Repeat last change |
+
+## Registers
+
+Athas Vim mode implements a named register system:
+
+- **Unnamed register** (`""`) — receives every yank and delete by default.
+- **Numbered registers** (`"1`–`"9`) — rolling history of the last nine deletes.
+- **Yank register** (`"0`) — always holds the last explicit yank.
+- **Named registers** (`"a`–`"z`) — write with `"a{operator}`, append with the uppercase variant (`"A{operator}`).
+
+Use `"{register}` before an operator or paste action to target a specific register.
+
+## Marks and jump list
+
+Set a mark at the current cursor position with `m{a-z}`, then jump back to it with `` `{a-z} ``. The jump list records positions from large-jump motions (`gg`, `G`, `%`, `{`, `}`), retaining up to 100 entries. Navigate the jump list with `ctrl+o` (back) and `ctrl+i` (forward).
+
+## Relative line numbers
+
+When Vim mode is active you can enable relative line numbers so each line shows its distance from the cursor rather than its absolute position. This makes count-prefixed motions like `5j` or `12dd` easier to use at a glance.
+
+| Setting | Default | Description |
+|---|---|---|
+| `vimRelativeLineNumbers` | `false` | Show line numbers relative to the cursor when Vim mode is on |
+
+Toggle this in **Settings → Keyboard → Relative Line Numbers**, or set it directly in your settings file.
+
+<Tip>
+Relative line numbers update live as the cursor moves, so you always know the exact count needed to reach any visible line.
+</Tip>
+
+## Difference from the Vim keybinding preset
+
+<Info>
+The **Vim keybinding preset** (selected under **Settings → Keyboard → Keybinding Preset**) does not enable modal editing. It only adjusts a small number of keyboard shortcuts to follow common Vim conventions. Full modal editing — modes, operators, motions, registers, marks — requires enabling **Vim Mode** separately.
+</Info>
+
+Both options can be used together. For example, you might enable Vim mode for modal editing and select no keybinding preset, or combine Vim mode with a different preset such as VS Code for the non-modal shortcuts outside the editor area.

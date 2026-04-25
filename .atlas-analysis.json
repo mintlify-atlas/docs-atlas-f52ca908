@@ -1,0 +1,85 @@
+{
+  "projectType": "saas",
+  "projectName": "Athas",
+  "projectDescription": "A lightweight, cross-platform desktop code editor built with Tauri (Rust and React) featuring AI agents, Git integration, LSP support, Vim keybindings, and an integrated terminal.",
+  "theme": "luma",
+  "primaryColor": "#1e73e1",
+  "lightColor": "#e1eefb",
+  "darkColor": "#79ace6",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/editor",
+              "features/git",
+              "features/terminal",
+              "features/ai"
+            ]
+          },
+          {
+            "group": "Customization",
+            "pages": [
+              "customization/themes",
+              "customization/keybindings",
+              "customization/settings",
+              "customization/vim-mode"
+            ]
+          },
+          {
+            "group": "Extensions",
+            "pages": [
+              "extensions/overview",
+              "extensions/installing",
+              "extensions/language-support"
+            ]
+          },
+          {
+            "group": "Contributing",
+            "pages": [
+              "contributing/setup",
+              "contributing/guidelines"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "AI chat and autocomplete with support for Anthropic, OpenAI, Google Gemini, Mistral, xAI Grok, DeepSeek, Qwen, and Ollama",
+    "CLI agent integration via Agent Client Protocol (ACP) for Claude Code, Codex CLI, Gemini CLI, and OpenCode",
+    "Full Git integration with diff viewer, staging, commit history, worktrees, and inline blame",
+    "LSP support for code intelligence including hover, go-to-definition, diagnostics, and inlay hints",
+    "Integrated terminal with customizable shell profiles",
+    "Vim keybindings with relative line numbers and configurable mode",
+    "Syntax highlighting via Tree-sitter WebAssembly grammars",
+    "Extension system with support for LSP servers, formatters, linters, themes, and snippets",
+    "SQLite database viewer",
+    "GitHub integration for pull requests, issues, and Actions",
+    "Keybinding presets for VS Code, JetBrains, Sublime Text, Xcode, Atom, Emacs, and Zed",
+    "Enterprise managed mode with extension allowlist"
+  ],
+  "publicApiSurface": [
+    "ExtensionManifest — extension package definition with LSP, grammar, formatter, linter, and UI contributions",
+    "LspConfiguration — LSP server configuration with platform-specific executables",
+    "GrammarConfiguration — Tree-sitter WASM grammar registration",
+    "FormatterConfiguration — external formatter integration",
+    "LinterConfiguration — external linter integration",
+    "AI_PROVIDERS — built-in AI provider registry (Anthropic, OpenAI, Gemini, Mistral, etc.)",
+    "AI_AGENTS — CLI agent registry via ACP protocol",
+    "Settings — full editor settings schema",
+    "KeybindingPreset — keybinding preset definitions (vscode, jetbrains, sublime, xcode, atom, emacs, zed)",
+    "UIContributions — sidebar views, toolbar actions, and menu contributions for extensions"
+  ]
+}

@@ -1,81 +1,120 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
-icon: 'rocket'
+title: "Quickstart: Open a Project and Start Coding in Athas"
+description: "Open your first project in Athas, learn the editor layout, set up an AI provider, and make your first AI-assisted edit — all in under ten minutes."
 ---
 
-## Get started in three steps
+This guide walks you through opening a project, navigating the Athas interface, and getting to a working state with AI chat enabled. By the end you will have a project open, know how to use the command palette, and have a connected AI provider ready to use.
 
-Get your documentation site running locally and make your first customization.
+<Steps>
+  <Step title="Open a project folder">
+    Launch Athas and open your project using one of these methods:
 
-### Step 1: Set up your local environment
+    - Press `Cmd+O` (macOS) or `Ctrl+O` (Windows / Linux) to open the folder picker.
+    - Use the menu bar: **File → Open Folder**.
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+    Once a folder is open, the **file explorer** appears in the left sidebar showing your project's directory tree. Click any file to open it in the editor.
 
-### Step 2: Deploy your changes
+    <Tip>
+      Athas remembers your recently opened folders. Reopen them quickly from the welcome screen or via **File → Open Recent**.
+    </Tip>
+  </Step>
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+  <Step title="Learn the layout">
+    Athas uses a standard editor layout with a few key areas:
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+    **Sidebar** — The left panel contains four activity tabs, accessible via the icons on the sidebar rail or these shortcuts:
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+    | Tab | Shortcut |
+    |-----|----------|
+    | File explorer | `Cmd+Shift+E` |
+    | Global search | `Cmd+Shift+F` |
+    | Git | `Cmd+Shift+G` |
+    | GitHub pull requests | — |
 
-### Step 3: Go live
+    Toggle the sidebar on and off with `Cmd+B`.
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+    **Editor panes** — Files open in the main editor area as tabs. Split the editor horizontally or vertically to view multiple files at once. Navigate between tabs with `Cmd+Alt+Right` and `Cmd+Alt+Left`, or switch to a specific tab with `Cmd+1` through `Cmd+9`.
 
-## Next steps
+    **Terminal** — Press `Cmd+J` to toggle the integrated terminal. The terminal supports multiple shell profiles and runs in the same window as your editor.
 
-Now that you have your docs running, explore these key features:
+    **Status bar** — The footer shows the current Git branch, active diagnostics, and AI chat controls on the right side.
+  </Step>
+
+  <Step title="Use the command palette">
+    The command palette gives you keyboard access to every Athas command without touching the mouse.
+
+    Press `Cmd+Shift+P` (macOS) or `Ctrl+Shift+P` (Windows / Linux) to open it. Type any part of a command name to filter the list, then press `Enter` to run it.
+
+    Common commands to try:
+
+    - `Toggle Sidebar` — show or hide the file explorer
+    - `Open Keyboard Shortcuts` — view and edit all keybindings
+    - `Toggle Theme` — switch your color theme
+    - `Format Document` — run the configured formatter on the current file
+
+    Press `Cmd+P` to open **Quick Open**, which lets you jump to any file in the project by name.
+  </Step>
+
+  <Step title="Set up an AI provider">
+    Athas includes AI chat and autocomplete. To use them, configure an AI provider with your API key.
+
+    1. Open **Settings** from the command palette (`Cmd+Shift+P → Open Settings`) or via the menu bar.
+    2. Navigate to the **AI** section.
+    3. Choose a provider from the dropdown. Athas supports:
+       - **Anthropic** (Claude Sonnet 4.6 is the default model)
+       - **OpenAI**
+       - **Google Gemini**
+       - **xAI Grok**
+       - **DeepSeek**
+       - **Mistral AI**
+       - **Qwen**
+       - **OpenRouter**
+       - **Ollama** (local, no API key required)
+    4. Enter your API key for the selected provider.
+    5. Optionally, choose a specific model from the model dropdown.
+
+    <Note>
+      Ollama lets you run models locally without an API key. Make sure Ollama is running at `http://localhost:11434` before selecting it in Athas.
+    </Note>
+  </Step>
+
+  <Step title="Start an AI chat session">
+    With a provider configured, open the AI chat panel:
+
+    - Press `Cmd+R` to toggle the AI chat panel.
+    - Or click the **AI chat** icon in the bottom-right status bar.
+
+    Type a question or paste code into the chat input and press `Enter`. The AI responds inline in the panel. You can ask questions about your code, request edits, or use it to generate boilerplate.
+
+    To use **AI agents** (such as Claude Code, Codex CLI, or Gemini CLI), press `Cmd+Shift+Space` to open the agent launcher. Agents must be installed separately and are detected automatically once their binary is available.
+  </Step>
+
+  <Step title="Explore the Git panel">
+    If your project folder is a Git repository, the Git panel gives you a full workflow without leaving Athas.
+
+    Open it with `Cmd+Shift+G`. The panel has three tabs:
+
+    - **Changes** — staged and unstaged file changes with inline diff view. Click a file to see the diff; stage individual files or hunks.
+    - **History** — commit log for the current branch.
+    - **Worktrees** — manage Git worktrees if you work across multiple branches simultaneously.
+
+    Inline Git blame appears in the editor gutter when **Enable Inline Git Blame** is active in settings. The status bar footer shows your current branch at all times.
+  </Step>
+</Steps>
+
+## What to explore next
 
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Editor features" icon="pen-to-square" href="/features/editor">
+    Syntax highlighting, LSP code intelligence, formatters, linters, and multi-pane layouts.
+  </Card>
+  <Card title="AI features" icon="robot" href="/features/ai">
+    Configure providers, choose models, and use CLI agents with the Agent Client Protocol.
+  </Card>
+  <Card title="Vim mode" icon="keyboard" href="/customization/vim-mode">
+    Enable Vim keybindings with optional relative line numbers.
+  </Card>
+  <Card title="Themes" icon="palette" href="/customization/themes">
+    Switch built-in themes or sync automatically with your system appearance.
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

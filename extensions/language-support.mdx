@@ -1,0 +1,282 @@
+---
+title: "Language Support, LSP, and Grammar Configuration in Athas"
+description: "How Athas uses Tree-sitter grammars for syntax highlighting and LSP servers for code intelligence, with full configuration reference for each component."
+---
+
+Athas provides two complementary layers of language support. Tree-sitter grammars handle syntax highlighting by parsing source files into a concrete syntax tree using WebAssembly parsers that run in the browser context. LSP servers run as separate processes and provide code intelligence features — completions, go-to-definition, hover documentation, and diagnostics — using the Language Server Protocol. Both layers are configured through the extension manifest.
+
+## Language contributions
+
+Before Athas can apply highlighting or start a language server, it needs to know which file extensions and filenames map to which language. The `languages` field in a manifest declares this mapping.
+
+```typescript
+export interface LanguageContribution {
+  id: string;         // Language ID (e.g., "rust", "typescript")
+  extensions: string[]; // File extensions including the dot (e.g., [".rs", ".rlib"])
+  aliases?: string[]; // Alternative names (e.g., ["Rust", "rs"])
+  filenames?: string[]; // Exact filename matches (e.g., ["Dockerfile", ".bashrc"])
+  configuration?: string; // Path to a language configuration file
+  firstLine?: string;    // Regex matched against the first line of a file
+}
+```
+
+The registry resolves the language for a file by checking `filenames` first for an exact match, then falling back to the file extension. The `firstLine` field can be used to detect languages like shell scripts that are identified by their shebang line.
+
+## Tree-sitter grammar configuration
+
+Syntax highlighting is powered by Tree-sitter grammars compiled to WebAssembly. The grammar is downloaded as a `.wasm` file and cached in IndexedDB so it only needs to be fetched once.
+
+```typescript
+export interface GrammarConfiguration {
+  wasmPath: string;   // URL or path to the Tree-sitter grammar WASM file
+  scopeName: string;  // Grammar scope name (e.g., "source.rust")
+  languageId: string; // Language ID this grammar applies to
+}
+```
+
+The `wasmPath` is resolved at install time. For extensions loaded from the CDN, it points to the packaged asset (e.g., `/tree-sitter/parsers/rust/parser.wasm`). For extensions with custom WASM files, an absolute URL may be used instead.
+
+## LSP configuration
+
+Language servers run as child processes managed by Athas. The `lsp` field in the manifest tells Athas which executable to launch, what arguments to pass, and which files the server handles.
+
+```typescript
+export interface LspConfiguration {
+  // Optional tool metadata (used when the server must be installed at runtime)
+  name?: string;
+  runtime?: ToolRuntime;
+  package?: string;
+  downloadUrl?: string;
+
+  // Executable path per platform
+  server: PlatformExecutable;
+
+  // Arguments passed to the server process
+  args?: string[];
+
+  // Environment variables injected into the server process
+  env?: Record<string, string>;
+
+  // Options sent in the LSP initialize request
+  initializationOptions?: Record<string, any>;
+
+  // File extensions this server handles
+  fileExtensions: string[];
+
+  // Language IDs this server handles
+  languageIds: string[];
+
+  // Server capabilities override
+  capabilities?: Record<string, any>;
+}
+```
+
+For extensions with native binaries distributed in platform+architecture-specific packages, a more granular type is used:
+
+```typescript
+export interface LspConfigurationWithArch {
+  server: PlatformArchExecutable;
+  args?: string[];
+  env?: Record<string, string>;
+  initializationOptions?: Record<string, unknown>;
+  fileExtensions: string[];
+  languageIds: string[];
+}
+```
+
+## Platform executable types
+
+Athas resolves the correct binary path based on the current OS and CPU architecture at runtime.
+
+### Platform-only executables
+
+Used by bundled or simple extensions that ship one binary per operating system:
+
+```typescript
+export interface PlatformExecutable {
+  default?: string; // Fallback if no platform-specific path is provided
+  darwin?: string;  // macOS (any architecture)
+  linux?: string;
+  win32?: string;   // Windows
+}
+```
+
+### Platform + architecture executables
+
+Used by extensions that distribute separate binaries for each OS and CPU combination:
+
+```typescript
+export interface PlatformArchExecutable {
+  "darwin-arm64"?: string; // macOS on Apple Silicon
+  "darwin-x64"?: string;   // macOS on Intel
+  "linux-x64"?: string;
+  "linux-arm64"?: string;
+  "win32-x64"?: string;    // Windows x64 (only x64 is supported on Windows)
+}
+```
+
+The supported platform and architecture values map to the following types:
+
+```typescript
+export type Platform = "darwin" | "linux" | "win32";
+export type Architecture = "arm64" | "x64";
+export type PlatformArch =
+  | "darwin-arm64"
+  | "darwin-x64"
+  | "linux-x64"
+  | "linux-arm64"
+  | "win32-x64";
+```
+
+When Athas looks up a server path, it checks for a platform-specific entry first and falls back to `default` if none is found. Relative paths starting with `./` are resolved relative to the extension's installation directory.
+
+## Tool runtime types
+
+Extensions that rely on a language runtime (instead of shipping a self-contained binary) declare their runtime using the `ToolRuntime` type. Athas uses this information to verify that the required runtime is available before attempting to start the tool.
+
+```typescript
+export type ToolRuntime = "bun" | "node" | "python" | "go" | "rust" | "binary";
+```
+
+The `"binary"` value indicates a standalone executable with no external runtime dependency.
+
+## Formatter configuration
+
+Extensions in the `Formatter` category configure how Athas invokes an external formatting tool.
+
+```typescript
+export interface FormatterConfiguration {
+  name?: string;
+  runtime?: ToolRuntime;
+  package?: string;
+  downloadUrl?: string;
+
+  // Executable path per platform
+  command: PlatformExecutable;
+
+  // Arguments passed to the formatter
+  args?: string[];
+
+  // Environment variables
+  env?: Record<string, string>;
+
+  // Language IDs this formatter handles
+  languages: string[];
+
+  // Whether to run the formatter automatically on save
+  formatOnSave?: boolean;
+
+  // How file content is passed to the formatter
+  inputMethod?: "stdin" | "file";
+
+  // How formatted content is returned
+  outputMethod?: "stdout" | "file";
+}
+```
+
+When `inputMethod` is `"stdin"`, Athas pipes the file content to the formatter's standard input. When it is `"file"`, Athas writes the content to a temporary file and passes the path as an argument. The `outputMethod` field controls whether Athas reads the result from stdout (`"stdout"`) or reads the file back after the formatter modifies it in-place (`"file"`).
+
+## Linter configuration
+
+Extensions in the `Linter` category configure how Athas invokes an external linting tool and how to interpret its output as editor diagnostics.
+
+```typescript
+export interface LinterConfiguration {
+  name?: string;
+  runtime?: ToolRuntime;
+  package?: string;
+  downloadUrl?: string;
+
+  // Executable path per platform
+  command: PlatformExecutable;
+
+  // Arguments passed to the linter
+  args?: string[];
+
+  // Environment variables
+  env?: Record<string, string>;
+
+  // Language IDs this linter handles
+  languages: string[];
+
+  // Whether to run the linter on save
+  lintOnSave?: boolean;
+
+  // Whether to run the linter as you type
+  lintOnType?: boolean;
+
+  // How file content is passed to the linter
+  inputMethod?: "stdin" | "file";
+
+  // Output format: LSP JSON or a custom regex pattern
+  diagnosticFormat?: "lsp" | "regex";
+
+  // Regex for parsing output when diagnosticFormat is "regex"
+  diagnosticPattern?: string;
+}
+```
+
+When `diagnosticFormat` is `"lsp"`, Athas expects the linter to emit diagnostics in LSP JSON format. When it is `"regex"`, Athas parses each output line using the pattern in `diagnosticPattern` to extract severity, line number, column, and message.
+
+## Snippet contributions
+
+Extensions can ship code snippets through the `snippets` field. Each `SnippetContribution` groups snippets by language ID:
+
+```typescript
+export interface SnippetContribution {
+  language: string; // Language ID the snippets apply to
+  snippets: Snippet[];
+}
+
+export interface Snippet {
+  prefix: string;            // Trigger text in the completion menu
+  body: string[] | string;   // Snippet body (lines array or single string)
+  description?: string;
+  scope?: string;            // Grammar scope (e.g., "source.typescript")
+}
+```
+
+Snippets contributed by installed extensions are merged with Athas's built-in snippets and appear in the editor's completion suggestions when the cursor is in a matching language context.
+
+## Example: PHP language extension
+
+The following is a real manifest excerpt from the PHP extension (`athas.php`) to illustrate how the fields work together:
+
+```typescript
+{
+  id: "athas.php",
+  name: "PHP",
+  displayName: "PHP",
+  categories: ["Language", "Formatter", "Linter", "Snippets"],
+  languages: [
+    {
+      id: "php",
+      extensions: [".php", ".phtml", ".php3", ".php4", ".php5", ".php7", ".php8"],
+      aliases: ["PHP", "php"],
+    },
+  ],
+  lsp: {
+    server: {
+      darwin: "lsp/intelephense-darwin-arm64",
+      linux:  "lsp/intelephense-linux-x64",
+      win32:  "lsp/intelephense-win32-x64.exe",
+    },
+    args: ["--stdio"],
+    fileExtensions: [".php", ".phtml"],
+    languageIds: ["php"],
+  },
+  installation: {
+    platformArch: {
+      "darwin-arm64": { downloadUrl: "...", size: 52681335, checksum: "..." },
+      "darwin-x64":   { downloadUrl: "...", size: 56850520, checksum: "..." },
+      "linux-x64":    { downloadUrl: "...", size: 55510926, checksum: "..." },
+      "win32-x64":    { downloadUrl: "...", size: 52036166, checksum: "..." },
+    },
+    minEditorVersion: "0.2.0",
+  },
+}
+```
+
+<Note>
+  The `installation.platformArch` map is used by Athas to select the correct download for the user's platform and CPU architecture. SHA-256 checksums are verified after download to ensure package integrity.
+</Note>

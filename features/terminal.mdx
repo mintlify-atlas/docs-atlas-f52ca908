@@ -1,0 +1,131 @@
+---
+title: "Integrated Terminal in Athas: Shells and Configuration"
+description: "Athas has a built-in terminal panel with shell profiles, font and cursor settings, a 10,000-line scrollback buffer, and support for multiple instances."
+---
+
+Athas ships with a terminal panel built directly into the editor window so you can run commands, scripts, and build processes without switching applications. The terminal supports multiple simultaneous instances, configurable shell profiles, and a range of appearance settings to match your working style.
+
+<CardGroup cols={2}>
+  <Card title="Multiple instances" icon="clone">
+    Open as many terminal instances as you need and switch between them from the terminal tab bar.
+  </Card>
+  <Card title="Shell profiles" icon="gear">
+    Configure which shell runs by default using shell profiles and the default shell settings.
+  </Card>
+  <Card title="Font and size" icon="font">
+    Set a dedicated monospace font and font size for the terminal, independent of the editor font.
+  </Card>
+  <Card title="Cursor style" icon="i-cursor">
+    Choose between block, underline, and bar cursor shapes. Enable blinking if you prefer it.
+  </Card>
+  <Card title="Scrollback buffer" icon="scroll">
+    Retain up to 10,000 lines of output by default so you can scroll back through long command runs.
+  </Card>
+  <Card title="Keyboard toggle" icon="keyboard">
+    Show or hide the terminal panel with a keyboard shortcut without losing your session.
+  </Card>
+</CardGroup>
+
+## Opening the terminal
+
+Use the keyboard shortcut to toggle the terminal panel open and closed. The panel appears at the bottom of the editor window. Your running sessions persist when you hide the panel — hiding does not terminate the shell process.
+
+## Multiple terminal instances
+
+You can create additional terminal instances using the **+** button in the terminal tab bar. Each instance runs an independent shell session. Switch between instances by clicking their tabs. Instances remain alive until you explicitly close them.
+
+## Shell profile configuration
+
+Athas uses shell profiles to determine which shell to launch. Two settings control this:
+
+| Setting | Description |
+|---|---|
+| `terminalDefaultShellId` | The ID of the shell to use (e.g., `bash`, `zsh`, `fish`) |
+| `terminalDefaultProfileId` | The ID of the specific shell profile to apply |
+
+Configure shell profiles in **Settings > Terminal**. If neither setting is set, Athas falls back to the system default shell.
+
+## Appearance settings
+
+The terminal has its own set of appearance settings, separate from the editor settings, so you can configure them independently.
+
+### Font
+
+| Setting | Default | Description |
+|---|---|---|
+| `terminalFontFamily` | system monospace | Font family used in the terminal |
+| `terminalFontSize` | system default | Font size in points |
+| `terminalLineHeight` | `1.2` | Line height multiplier |
+| `terminalLetterSpacing` | `0` | Additional letter spacing in pixels |
+
+### Cursor
+
+| Setting | Default | Options | Description |
+|---|---|---|---|
+| `terminalCursorStyle` | `"block"` | `"block"`, `"underline"`, `"bar"` | Shape of the cursor |
+| `terminalCursorBlink` | `true` | `true`, `false` | Whether the cursor blinks |
+| `terminalCursorWidth` | `2` | number | Width of the cursor in pixels (applies to bar style) |
+
+<Tabs>
+  <Tab title="Block cursor">
+    A solid rectangle that covers the character at the cursor position. This is the default.
+
+    ```json
+    {
+      "terminalCursorStyle": "block",
+      "terminalCursorBlink": true
+    }
+    ```
+  </Tab>
+  <Tab title="Underline cursor">
+    A horizontal line below the character at the cursor position.
+
+    ```json
+    {
+      "terminalCursorStyle": "underline",
+      "terminalCursorBlink": true
+    }
+    ```
+  </Tab>
+  <Tab title="Bar cursor">
+    A thin vertical bar between characters. The width is controlled by `terminalCursorWidth`.
+
+    ```json
+    {
+      "terminalCursorStyle": "bar",
+      "terminalCursorWidth": 2,
+      "terminalCursorBlink": true
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Scrollback buffer
+
+The terminal keeps a history of output lines so you can scroll up to review earlier output. The default scrollback limit is 10,000 lines:
+
+```json
+{
+  "terminalScrollback": 10000
+}
+```
+
+Increase this value if you regularly work with commands that produce long output, or decrease it to reduce memory usage.
+
+<Tip>
+If you notice the terminal slowing down during commands that produce a large amount of output, lowering `terminalScrollback` can help.
+</Tip>
+
+## Enabling and disabling the terminal
+
+The terminal panel is part of Athas's core features and is enabled by default. You can disable it entirely from **Settings > Features** if you prefer to use an external terminal:
+
+```json
+{
+  "coreFeatures": {
+    "terminal": true
+  }
+}
+```
+
+Set `terminal` to `false` to remove the terminal panel from the interface.

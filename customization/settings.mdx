@@ -1,0 +1,167 @@
+---
+title: "Complete Settings and Preferences Reference for Athas"
+description: "A complete reference for every Athas setting, from editor font and tab size to AI provider, terminal behavior, language tooling, and enterprise controls."
+---
+
+Athas exposes a broad set of preferences that control how the editor looks, behaves, and integrates with external tools. All settings are persisted per user and take effect immediately without restarting the editor. Open Settings with `cmd+,` (macOS) or `ctrl+,` (Windows/Linux), or via the application menu.
+
+## General
+
+| Setting | Default | Description |
+|---|---|---|
+| `autoSave` | `false` | Automatically save files after each change |
+| `sidebarPosition` | `"left"` | Position of the primary sidebar — `"left"` or `"right"` |
+| `quickOpenPreview` | `true` | Preview files in the editor as you navigate the quick open list |
+
+## Editor
+
+| Setting | Default | Description |
+|---|---|---|
+| `fontFamily` | system mono | Font family used in the code editor |
+| `fontSize` | system default | Font size (in px) for editor text |
+| `tabSize` | `2` | Number of spaces per indentation level |
+| `wordWrap` | `false` | Wrap long lines at the editor boundary |
+| `lineNumbers` | `true` | Show line numbers in the gutter |
+| `showMinimap` | `false` | Show the minimap scrollbar on the right side |
+
+## Terminal
+
+| Setting | Default | Description |
+|---|---|---|
+| `terminalFontFamily` | system mono | Font family used in the integrated terminal |
+| `terminalFontSize` | system default | Font size (in px) for terminal text |
+| `terminalLineHeight` | `1.2` | Line height multiplier for terminal output |
+| `terminalLetterSpacing` | `0` | Extra letter spacing (in px) in the terminal |
+| `terminalScrollback` | `10000` | Number of lines retained in the terminal scroll buffer |
+| `terminalCursorStyle` | `"block"` | Terminal cursor shape — `"block"`, `"underline"`, or `"bar"` |
+| `terminalCursorBlink` | `true` | Animate the terminal cursor |
+| `terminalCursorWidth` | `2` | Width (in px) of the bar cursor style |
+| `terminalDefaultShellId` | `""` | ID of the default shell to open in new terminal sessions |
+| `terminalDefaultProfileId` | `""` | ID of the default terminal profile |
+
+## UI
+
+| Setting | Default | Description |
+|---|---|---|
+| `uiFontFamily` | system UI | Font family for all editor chrome (sidebar, tabs, status bar) |
+| `uiFontSize` | system default | Font size (in px) for editor chrome |
+
+## Theme and appearance
+
+Theme settings are covered in detail on the [Themes and Appearance](/customization/themes) page. The relevant settings are `theme`, `iconTheme`, `syncSystemTheme`, `autoThemeLight`, `autoThemeDark`, `nativeMenuBar`, and `compactMenuBar`.
+
+## AI
+
+<AccordionGroup>
+  <Accordion title="AI settings reference">
+    | Setting | Default | Description |
+    |---|---|---|
+    | `aiProviderId` | `"anthropic"` | AI provider used for chat and completions |
+    | `aiModelId` | `"claude-sonnet-4-6"` | Model used for the AI chat panel |
+    | `aiAutocompleteModelId` | `"mistralai/devstral-small"` | Model used for inline AI code completions |
+    | `aiCompletion` | `true` | Enable inline AI code completions |
+    | `aiChatWidth` | `400` | Width (in px) of the AI chat panel |
+    | `isAIChatVisible` | `false` | Show the AI chat panel on startup |
+    | `aiDefaultSessionMode` | `""` | Default mode for new AI chat sessions |
+    | `ollamaBaseUrl` | `"http://localhost:11434"` | Base URL for a local Ollama instance |
+  </Accordion>
+</AccordionGroup>
+
+## Keyboard
+
+| Setting | Default | Description |
+|---|---|---|
+| `keybindingPreset` | `"none"` | Active keybinding preset — `"none"`, `"vscode"`, `"jetbrains"`, `"sublime"`, `"xcode"`, `"atom"`, `"emacs"`, or `"zed"` |
+| `vimMode` | `false` | Enable full modal Vim editing |
+| `vimRelativeLineNumbers` | `false` | Show relative line numbers when Vim mode is active |
+
+See [Keyboard Shortcuts](/customization/keybindings) and [Vim Mode](/customization/vim-mode) for details.
+
+## Language
+
+<AccordionGroup>
+  <Accordion title="Language settings reference">
+    | Setting | Default | Description |
+    |---|---|---|
+    | `defaultLanguage` | `"auto"` | Language mode applied to new untitled files |
+    | `autoDetectLanguage` | `true` | Infer language from file extension and content |
+    | `formatOnSave` | `false` | Run the formatter automatically when saving |
+    | `formatter` | `"prettier"` | Formatter to use — currently `"prettier"` |
+    | `lintOnSave` | `false` | Run the linter automatically when saving |
+    | `autoCompletion` | `true` | Show language-server completion suggestions |
+    | `parameterHints` | `true` | Show function signature hints while typing |
+  </Accordion>
+</AccordionGroup>
+
+## External editor
+
+Athas can hand off the current file to an external terminal editor. Set `externalEditor` to one of the supported values:
+
+| Value | Editor |
+|---|---|
+| `"none"` | Disabled (default) |
+| `"nvim"` | Neovim |
+| `"helix"` | Helix |
+| `"vim"` | Vim |
+| `"nano"` | Nano |
+| `"emacs"` | Emacs |
+| `"custom"` | Command defined in `customEditorCommand` |
+
+When `"custom"` is selected, set `customEditorCommand` to the full shell command that should open the file (for example, `micro`).
+
+## Core features
+
+The `coreFeatures` object lets you disable individual Athas subsystems. All features are enabled by default.
+
+| Feature key | Default | Description |
+|---|---|---|
+| `git` | `true` | Git integration (status, diff, staging, commit) |
+| `github` | `true` | GitHub pull requests, issues, and Actions |
+| `remote` | `true` | Remote workspace and SSH support |
+| `terminal` | `true` | Integrated terminal |
+| `search` | `true` | Global and project-wide search |
+| `diagnostics` | `true` | Error and warning diagnostics panel |
+| `aiChat` | `true` | AI chat panel |
+| `breadcrumbs` | `true` | File path breadcrumb bar in the editor |
+| `persistentCommands` | `true` | Persistent command history |
+
+<Warning>
+Disabling a core feature hides its associated UI and panel but does not unload the underlying extension code. Re-enable the feature and restart the editor to fully restore it.
+</Warning>
+
+## Advanced and enterprise
+
+<AccordionGroup>
+  <Accordion title="Enterprise settings reference">
+    | Setting | Default | Description |
+    |---|---|---|
+    | `enterpriseManagedMode` | `false` | Lock the editor configuration for managed deployments |
+    | `enterpriseRequireExtensionAllowlist` | `false` | Block extensions not present in the allowlist |
+    | `enterpriseAllowedExtensionIds` | `[]` | List of extension IDs permitted when the allowlist is enforced |
+
+    <Note>
+    Enterprise settings are intended for organization-managed deployments. Enabling `enterpriseManagedMode` prevents users from modifying most preferences.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Git and file tree
+
+<AccordionGroup>
+  <Accordion title="Git and file tree settings reference">
+    | Setting | Default | Description |
+    |---|---|---|
+    | `gitChangesFolderView` | `true` | Group changed files by folder in the Git panel |
+    | `confirmBeforeDiscard` | `true` | Ask for confirmation before discarding changes |
+    | `autoRefreshGitStatus` | `true` | Refresh Git status automatically on file system changes |
+    | `showUntrackedFiles` | `true` | Show untracked files in the Git panel |
+    | `showStagedFirst` | `true` | List staged changes above unstaged ones |
+    | `gitDefaultDiffView` | `"unified"` | Default diff layout — `"unified"` or `"split"` |
+    | `openDiffOnClick` | `true` | Open the diff view when clicking a changed file |
+    | `showGitStatusInFileTree` | `true` | Overlay Git status badges on file tree items |
+    | `enableInlineGitBlame` | `true` | Show inline blame annotations in the editor gutter |
+    | `enableGitGutter` | `true` | Show added/modified/removed indicators in the editor gutter |
+    | `hiddenFilePatterns` | `[]` | Glob patterns for files to hide in the file tree |
+    | `hiddenDirectoryPatterns` | `[]` | Glob patterns for directories to hide in the file tree |
+  </Accordion>
+</AccordionGroup>

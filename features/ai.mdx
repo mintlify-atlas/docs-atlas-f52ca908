@@ -1,0 +1,161 @@
+---
+title: "AI Chat, Inline Autocomplete, and CLI Agents in Athas"
+description: "Athas has AI chat, inline autocomplete, and CLI agents via ACP. Supports Anthropic, OpenAI, Gemini, Grok, Mistral, DeepSeek, Qwen, OpenRouter, and Ollama."
+---
+
+Athas integrates AI assistance at two levels: an AI chat panel for open-ended conversations and code generation, and an inline autocomplete engine that suggests completions as you type. Beyond standard API providers, Athas supports CLI agents that communicate via the Agent Client Protocol (ACP), letting you run Claude Code, Codex CLI, Gemini CLI, and others directly inside the editor.
+
+## AI chat panel
+
+The AI chat panel sits on the right side of the editor window. Toggle it open and closed with the keyboard shortcut or via the activity bar. The panel width defaults to 400px and is adjustable:
+
+```json
+{
+  "isAIChatVisible": false,
+  "aiChatWidth": 400
+}
+```
+
+When the panel is open, you can start a conversation with the configured AI provider or switch to a CLI agent session. Agents surface slash commands, session modes, and a live plan view when the agent supports those features.
+
+## AI autocomplete
+
+Athas provides inline autocomplete suggestions as you type, powered by a separate model from the one used for chat. Autocomplete is enabled by default:
+
+```json
+{
+  "aiCompletion": true,
+  "aiAutocompleteModelId": "mistralai/devstral-small"
+}
+```
+
+The default autocomplete model is `mistralai/devstral-small`. You can change this to any model available from your configured providers.
+
+## Supported AI providers
+
+<CardGroup cols={2}>
+  <Card title="Anthropic" icon="a">
+    Claude Opus 4.7, Claude Sonnet 4.6, Claude Haiku 4.5. Requires an Anthropic API key.
+  </Card>
+  <Card title="OpenAI" icon="o">
+    GPT-5 series, GPT-4.1 series, GPT-4o, o1, o3, o4 Mini. Requires an OpenAI API key.
+  </Card>
+  <Card title="Google Gemini" icon="g">
+    Gemini 2.5 Pro, Gemini 2.5 Flash, Gemini 3 series previews. Requires a Gemini API key.
+  </Card>
+  <Card title="xAI Grok" icon="x">
+    Grok 4, Grok 4.1, Grok 4.20 in reasoning and non-reasoning variants. Requires an xAI API key.
+  </Card>
+  <Card title="DeepSeek" icon="d">
+    DeepSeek V3.2 and DeepSeek V3.2 Reasoner. Requires a DeepSeek API key.
+  </Card>
+  <Card title="Mistral AI" icon="m">
+    Mistral Large 3, Mistral Medium 3.1, Mistral Small 4, Codestral, Devstral 2. Requires a Mistral API key.
+  </Card>
+  <Card title="Qwen" icon="q">
+    Qwen 3.5 Flash, Qwen 3.5 Plus, Qwen 3.6 Plus. Requires a Qwen API key.
+  </Card>
+  <Card title="v0" icon="v">
+    v0 1.0 Medium, v0 1.5 Medium, v0 1.5 Large. Requires a v0 API key.
+  </Card>
+  <Card title="OpenRouter" icon="shuffle">
+    Access models from Anthropic, OpenAI, Google, xAI, DeepSeek, Mistral, and Qwen through a single API key.
+  </Card>
+  <Card title="Ollama" icon="server">
+    Run any Ollama-compatible model locally. No API key required. Connects to `http://localhost:11434` by default.
+  </Card>
+</CardGroup>
+
+The default provider is **Anthropic** and the default model is **Claude Sonnet 4.6**:
+
+```json
+{
+  "aiProviderId": "anthropic",
+  "aiModelId": "claude-sonnet-4-6"
+}
+```
+
+## CLI agents via ACP
+
+Athas integrates CLI-based coding agents through the Agent Client Protocol (ACP). ACP-compatible agents run as local processes and communicate with Athas over a structured protocol, appearing as selectable session types in the AI panel alongside standard API providers.
+
+The following agents are supported:
+
+| Agent | Binary | Description |
+|---|---|---|
+| Claude Code | `claude-code-acp` | Anthropic's Claude Code ACP adapter |
+| Codex CLI | `codex-acp` | OpenAI Codex agent via ACP adapter |
+| Gemini CLI | `gemini` | Google's Gemini CLI agent |
+| Kimi CLI | `kimi` | Moonshot Kimi CLI agent |
+| OpenCode | `opencode` | SST OpenCode agent |
+| Qwen Code | `qwen` | Alibaba Qwen Code agent |
+
+<Note>
+CLI agents must be installed on your system before they appear as available options in Athas. Athas detects installed agents automatically by checking for their binaries in your `PATH`.
+</Note>
+
+ACP enables agents to stream content, report tool usage, request permissions, surface slash commands, update session titles, open terminal windows, and present structured plans — all visible inside the Athas chat panel.
+
+## Configuring a provider
+
+<Steps>
+  <Step title="Open Settings">
+    Go to **Settings** (keyboard shortcut or via the menu) and navigate to the **AI** section.
+  </Step>
+  <Step title="Select a provider">
+    Choose your provider from the **AI Provider** dropdown. The available models for that provider populate automatically.
+  </Step>
+  <Step title="Enter your API key">
+    Enter your API key in the **API Key** field. Athas stores the key securely in the system keychain and never writes it to disk in plain text.
+  </Step>
+  <Step title="Choose a model">
+    Select the model you want to use from the **Model** dropdown. This becomes the active chat model.
+  </Step>
+  <Step title="Optionally set an autocomplete model">
+    To use a different model for inline autocomplete, set **Autocomplete model** to your preferred option. The default is `mistralai/devstral-small`.
+  </Step>
+</Steps>
+
+## Setting up Ollama for local models
+
+Ollama lets you run AI models on your own hardware with no API key required.
+
+<Steps>
+  <Step title="Install Ollama">
+    Download and install Ollama from [ollama.com](https://ollama.com) and pull at least one model:
+
+    ```bash
+    ollama pull llama3
+    ```
+  </Step>
+  <Step title="Start the Ollama server">
+    Ollama starts a local server at `http://localhost:11434` when you launch it. Confirm it is running:
+
+    ```bash
+    ollama list
+    ```
+  </Step>
+  <Step title="Select Ollama in Athas">
+    Open **Settings > AI**, set the provider to **Ollama**, and confirm the base URL:
+
+    ```json
+    {
+      "aiProviderId": "ollama",
+      "ollamaBaseUrl": "http://localhost:11434"
+    }
+    ```
+  </Step>
+  <Step title="Choose a model">
+    Athas queries the Ollama server for available models and populates the model list. Select the model you pulled.
+  </Step>
+</Steps>
+
+<Tip>
+If you run Ollama on a different host or port, update `ollamaBaseUrl` to match. For example, `http://192.168.1.100:11434` for a model server on your local network.
+</Tip>
+
+## Using OpenRouter
+
+OpenRouter provides access to models from multiple providers through a single API key, which is useful if you want to compare models or avoid managing multiple keys.
+
+Select **OpenRouter** as your provider, enter your OpenRouter API key, and choose a model from the combined list. OpenRouter models follow a `provider/model-id` naming convention (for example, `anthropic/claude-sonnet-4.5`).

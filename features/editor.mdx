@@ -1,0 +1,128 @@
+---
+title: "Editing Code in Athas: Syntax, LSP, and Formatting"
+description: "Athas offers Tree-sitter syntax highlighting, LSP code intelligence, configurable formatters and linters, multi-pane layouts, and external editor support."
+---
+
+Athas includes a capable code editor at its core, built to handle everyday editing tasks without relying on plugins for the essentials. Tree-sitter grammars provide accurate syntax highlighting, a built-in LSP client connects to language servers for code intelligence, and formatters and linters run on save. You can arrange files across multiple panes, jump to an external editor when you need it, and tune display settings like word wrap, minimap, and tab size to match how you work.
+
+<CardGroup cols={2}>
+  <Card title="Syntax highlighting" icon="highlighter">
+    Tree-sitter grammars for accurate, incremental syntax highlighting across all supported languages.
+  </Card>
+  <Card title="LSP code intelligence" icon="magnifying-glass-code">
+    Hover docs, go-to-definition, diagnostics, inlay hints, code lens, rename, and semantic tokens via language servers.
+  </Card>
+  <Card title="Formatters and linters" icon="wand-magic-sparkles">
+    Prettier runs by default on save. Linters can also run on save with a single setting toggle.
+  </Card>
+  <Card title="Autocomplete" icon="list-check">
+    In-editor completions from LSP servers, with parameter hints and snippet support.
+  </Card>
+  <Card title="Multi-pane layout" icon="table-columns">
+    Split your workspace into multiple editor panes to view and edit files side by side.
+  </Card>
+  <Card title="External editor" icon="terminal">
+    Open the current file in nvim, Helix, Vim, nano, Emacs, or a custom command.
+  </Card>
+</CardGroup>
+
+## Syntax highlighting
+
+Athas uses Tree-sitter grammars to parse and highlight code. Tree-sitter builds a concrete syntax tree incrementally, which means highlighting stays accurate even in large files and updates only the changed regions rather than re-parsing the whole file.
+
+Language detection runs automatically by default. You can pin a specific language for a file using the language selector in the status bar, or set `defaultLanguage` in settings to fix a fallback for unrecognized files.
+
+## LSP code intelligence
+
+The built-in LSP client connects to language servers you install and manages the communication between Athas and those servers. Each of the following capabilities is backed by a dedicated implementation:
+
+| Capability | What it does |
+|---|---|
+| Hover | Shows type information and documentation for the symbol under the cursor |
+| Go-to-definition | Jumps to the declaration of a symbol, including across files |
+| Diagnostics | Displays errors and warnings from the language server in the gutter and problems panel |
+| Inlay hints | Renders type annotations and parameter labels inline in the editor |
+| Code lens | Shows contextual actions above functions and types, such as reference counts |
+| Rename | Renames a symbol and updates all references in the workspace |
+| Semantic tokens | Applies semantic highlighting on top of syntactic highlighting for more accurate coloring |
+| Signature help | Shows function signature and parameter documentation while you type |
+
+<Note>
+Language servers must be installed separately. Athas connects to any server that follows the Language Server Protocol specification. Install servers through the Extensions panel or your system package manager.
+</Note>
+
+## Formatters
+
+The default formatter is Prettier. When `formatOnSave` is enabled, Athas runs the configured formatter every time you save a file. You can change the formatter in **Settings** under the Language section.
+
+```json
+// Settings equivalent
+{
+  "formatter": "prettier",
+  "formatOnSave": false
+}
+```
+
+## Linters
+
+Linting follows the same pattern as formatting. Enable `lintOnSave` to run the active linter when you save. Linter output appears in the diagnostics panel alongside LSP diagnostics.
+
+## Autocomplete
+
+Autocompletion draws from the connected language server. The `autoCompletion` setting controls whether the completion popup appears automatically. Parameter hints (`parameterHints`) show function signatures as you type arguments.
+
+## Multi-pane layout
+
+You can split the editor area horizontally or vertically to display multiple files at once. Each pane maintains its own cursor position, scroll state, and open tabs. Panes are useful for comparing a test file alongside its implementation or keeping documentation open while you write code.
+
+## Display settings
+
+The following settings control how the editor looks and behaves:
+
+| Setting | Default | Description |
+|---|---|---|
+| `lineNumbers` | `true` | Show line numbers in the gutter |
+| `wordWrap` | `false` | Wrap long lines instead of scrolling horizontally |
+| `showMinimap` | `false` | Show a miniature code overview on the right edge |
+| `tabSize` | `2` | Number of spaces per indentation level |
+| `fontSize` | system default | Editor font size in points |
+| `fontFamily` | system default | Monospace font for editor text |
+
+## External editor
+
+When you prefer to edit a file in a different editor, Athas can open it for you. Select an external editor in **Settings > External Editor**. The supported options are:
+
+<CardGroup cols={3}>
+  <Card title="nvim" icon="n">
+    Neovim
+  </Card>
+  <Card title="helix" icon="h">
+    Helix
+  </Card>
+  <Card title="vim" icon="v">
+    Vim
+  </Card>
+  <Card title="nano" icon="n">
+    nano
+  </Card>
+  <Card title="emacs" icon="e">
+    Emacs
+  </Card>
+  <Card title="custom" icon="terminal">
+    Any editor via a custom shell command
+  </Card>
+</CardGroup>
+
+When you choose **custom**, set `customEditorCommand` to the full command Athas should run. The current file path is passed as the first argument.
+
+```json
+// Example: open in a custom editor
+{
+  "externalEditor": "custom",
+  "customEditorCommand": "/usr/local/bin/my-editor"
+}
+```
+
+<Tip>
+Set `externalEditor` to `"none"` to disable the external editor option entirely.
+</Tip>

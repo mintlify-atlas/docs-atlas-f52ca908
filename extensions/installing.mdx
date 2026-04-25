@@ -1,0 +1,95 @@
+---
+title: "How to Install, Enable, and Manage Athas Extensions"
+description: "Browse, install, disable, and remove extensions from the Athas Extensions panel. Understand extension states, tab filters, and enterprise allowlist enforcement."
+---
+
+The Extensions panel is the central place for discovering and managing everything that extends Athas — language packs, themes, keybinding presets, snippet collections, and UI add-ons. You can open it from the activity bar on the sidebar. From there you can browse available extensions, install or uninstall them, and monitor their current state.
+
+## Browsing extensions
+
+The Extensions panel organizes extensions into tabs so you can filter by type. The active tab is controlled by the `extensionsActiveTab` setting, which persists your last-used view across sessions.
+
+| Tab value | What it shows |
+|---|---|
+| `all` | Every available and installed extension |
+| `core` | Built-in Athas extensions |
+| `language` | Language packs with grammar and LSP support |
+| `theme` | Color themes |
+| `icon-theme` | Icon themes |
+| `snippet` | Snippet collections |
+| `database` | Database-related extensions |
+| `ui` | Extensions that add sidebar views or toolbar actions |
+
+## Installing an extension
+
+<Steps>
+  <Step title="Open the Extensions panel">
+    Click the Extensions icon in the activity bar, or use the command palette and search for **Extensions: Show Extensions**.
+  </Step>
+  <Step title="Find the extension you want">
+    Browse by tab or use the search field to filter by name. Each entry shows the extension name, publisher, version, and a short description.
+  </Step>
+  <Step title="Click Install">
+    Click the **Install** button on the extension card. Athas begins downloading the extension package from the CDN. A progress indicator appears during the download.
+
+    <Note>
+      Language extensions that include native binaries are distributed as platform-specific packages. Athas automatically selects the correct package for your OS and CPU architecture (macOS ARM64, macOS x64, Linux x64, Linux ARM64, or Windows x64).
+    </Note>
+  </Step>
+  <Step title="Wait for activation">
+    After the download completes, Athas stores the extension locally and transitions it through its activation sequence. You can watch the state change in the panel.
+  </Step>
+</Steps>
+
+## Extension states
+
+Each extension moves through a defined lifecycle. The current state is reflected in the Extensions panel next to each entry.
+
+| State | Meaning |
+|---|---|
+| `not-installed` | The extension is available in the registry but has not been downloaded. |
+| `installing` | The extension package is being downloaded. A progress percentage is shown. |
+| `installed` | The package is stored locally but has not yet been activated in the current session. |
+| `activating` | Athas is loading the extension and starting any associated language servers. |
+| `activated` | The extension is fully active and contributing its capabilities to the editor. |
+| `deactivating` | The extension is being shut down (e.g., when you disable or uninstall it). |
+| `deactivated` | The extension is present but not running. |
+| `error` | Activation failed. An error message is available in the extension detail view. |
+
+<Warning>
+  If an extension enters the `error` state, check that any required language runtime is available on your `PATH`. For extensions that invoke external tools (LSP servers, formatters, linters), the tool must be installed separately unless the extension bundles its own binary.
+</Warning>
+
+## Enabling and disabling extensions
+
+You can disable any installed extension without uninstalling it. Disabling an extension stops it from activating in future sessions but keeps its files on disk. To re-enable it, click **Enable** in the Extensions panel or toggle the setting from the extension detail view.
+
+Bundled extensions (themes and icon themes that ship with Athas) can be switched in **Settings → Theme** and **Settings → Icon Theme** rather than through the Extensions panel.
+
+## Updating extensions
+
+When a newer version of an installed extension is available on the CDN, an update badge appears on the extension entry. Click **Update** to download the new version. Athas uninstalls the current version and reinstalls from the latest package automatically.
+
+<Tip>
+  Athas checks for extension updates each time the extension store initializes. You can also trigger a manual check from the Extensions panel menu.
+</Tip>
+
+## Uninstalling an extension
+
+Click **Uninstall** on any installed extension entry. For language extensions, Athas removes the cached WASM parser and any associated data from IndexedDB. The extension returns to `not-installed` state and remains visible in the panel so you can reinstall it later.
+
+## Enterprise allowlist enforcement
+
+When your Athas installation is managed by an organization with `enterpriseManagedMode` enabled and `enterpriseRequireExtensionAllowlist` set to `true`, the install and update buttons are disabled for any extension whose ID does not appear in `enterpriseAllowedExtensionIds`.
+
+Attempting to install a blocked extension programmatically produces an error:
+
+```
+Installation blocked by enterprise policy. "<extension-id>" is not in the extension allowlist.
+```
+
+The same check applies to updates. Extensions that were installed before the allowlist policy was applied are not automatically removed, but they cannot be updated unless their ID is added to the allowlist.
+
+<Info>
+  The allowlist comparison is case-insensitive. Extension IDs are normalized to lowercase before checking, so `"Athas.PHP"` and `"athas.php"` are treated as the same entry.
+</Info>

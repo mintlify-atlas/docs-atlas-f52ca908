@@ -1,0 +1,76 @@
+---
+title: "Themes, Icon Themes, and Appearance in Athas Editor"
+description: "Customize the look of Athas with built-in themes, icon themes, and automatic system theme switching. Extend your palette further with theme extensions."
+---
+
+Athas ships with a curated set of built-in themes and supports automatic light/dark switching based on your operating system. The theme system is backed by the extension registry, so community and third-party extensions can contribute additional themes alongside the ones bundled with the editor.
+
+## Built-in themes
+
+The default theme is **Athas Dark**, a low-glare dark theme with warm neutrals and muted accents. **Athas Light** offers a neutral light counterpart with crisp whites and balanced contrast. Both themes apply a full set of CSS variables covering UI chrome, syntax tokens, terminal colors, and Git status indicators.
+
+Beyond the Athas family, the following theme packs are included out of the box:
+
+| Theme pack | Variants |
+|---|---|
+| Athas | `athas-dark`, `athas-light` |
+| Ayu | Dark, light, and mirage variants |
+| Catppuccin | Mocha, Macchiato, Frappé, Latte |
+| Dracula | Dark |
+| GitHub | Dark, light, dimmed |
+| Nord | Dark |
+| One | Dark, light |
+| Solarized | Dark, light |
+| Tokyo Night | Night, storm, day |
+| Vitesse | Dark, light |
+| Contrast themes | High-contrast dark and light |
+
+## Icon themes
+
+Athas uses the **Material** icon theme by default (`iconTheme: "material"`). Icon themes control the file and folder icons shown in the file explorer and tabs. Additional icon theme packs can be installed through extensions.
+
+## Switching themes
+
+<Steps>
+  <Step title="Open Settings">
+    Press `cmd+,` (macOS) or `ctrl+,` (Windows/Linux) to open the Settings panel, or select **Settings** from the application menu.
+  </Step>
+  <Step title="Go to Appearance">
+    Navigate to the **Appearance** section in the Settings sidebar.
+  </Step>
+  <Step title="Choose a theme">
+    Select a theme from the **Theme** dropdown. The change is applied immediately — no restart required.
+  </Step>
+  <Step title="Choose an icon theme">
+    Select an icon pack from the **Icon Theme** dropdown below the theme selector.
+  </Step>
+</Steps>
+
+You can also open the theme picker directly with the keyboard shortcut `cmd+k cmd+t`.
+
+## System theme sync
+
+When **Sync System Theme** (`syncSystemTheme`) is enabled, Athas automatically switches between a designated light theme and a designated dark theme as your OS appearance changes.
+
+| Setting | Default | Description |
+|---|---|---|
+| `syncSystemTheme` | `false` | Follow the OS light/dark preference automatically |
+| `autoThemeLight` | `"athas-light"` | Theme to use when the OS is in light mode |
+| `autoThemeDark` | `"athas-dark"` | Theme to use when the OS is in dark mode |
+
+<Note>
+When `syncSystemTheme` is enabled, the manual `theme` setting is overridden by whichever auto-theme matches the current OS appearance. Disabling sync restores manual control.
+</Note>
+
+## Menu bar options
+
+Two settings control the menu bar appearance:
+
+| Setting | Default | Description |
+|---|---|---|
+| `nativeMenuBar` | `false` | Use the platform-native OS menu bar instead of the in-app menu |
+| `compactMenuBar` | `true` | Show a compact, space-saving menu bar layout |
+
+## Theme extensions
+
+Any extension with `"Theme"` in its `categories` array can register additional themes into the theme registry at runtime. Installed theme extensions appear alongside built-in themes in the theme selector — no extra steps required. You can browse and install theme extensions from the Extensions panel.

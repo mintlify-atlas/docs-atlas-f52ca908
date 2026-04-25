@@ -1,0 +1,57 @@
+---
+title: "Athas — Lightweight Cross-Platform Code Editor for Devs"
+description: "Athas is a native desktop code editor built with Tauri, Rust, and React — with AI agents, Git, LSP, Vim keybindings, and an integrated terminal."
+---
+
+Athas is a desktop code editor built for developers who want a native application without the weight of an Electron shell. By combining a Rust backend via Tauri with a React frontend, Athas runs natively on macOS, Linux, and Windows. The editor brings together what most workflows actually need — AI coding assistants, Git integration, language server support, Vim keybindings, an integrated terminal, and a SQLite viewer — without requiring extensions for the core loop.
+
+<CardGroup cols={2}>
+  <Card title="AI agents" icon="robot" href="/features/ai">
+    Chat and autocomplete powered by Anthropic, OpenAI, Google Gemini, Mistral, xAI Grok, DeepSeek, Qwen, OpenRouter, and Ollama. Supports CLI agents including Claude Code, Codex CLI, and Gemini CLI via the Agent Client Protocol.
+  </Card>
+  <Card title="Git integration" icon="code-branch" href="/features/git">
+    Stage changes, view unified or split diffs, manage worktrees, browse commit history, and see inline blame annotations — all without leaving the editor.
+  </Card>
+  <Card title="LSP code intelligence" icon="magnifying-glass-code" href="/features/editor">
+    Go-to-definition, hover documentation, inlay hints, diagnostics, and rename refactoring powered by language servers. Formatters and linters run on save.
+  </Card>
+  <Card title="Vim keybindings" icon="keyboard" href="/customization/vim-mode">
+    Full Vim mode with optional relative line numbers. Switch between normal and insert mode with the keybinding preset of your choice.
+  </Card>
+  <Card title="Integrated terminal" icon="terminal" href="/features/terminal">
+    A built-in terminal with configurable shell profiles, font settings, and scrollback. Toggle it with `Cmd+J` without switching away from your code.
+  </Card>
+  <Card title="Extensions" icon="puzzle-piece" href="/extensions/overview">
+    Add language packs, formatters, linters, themes, and LSP servers. Enterprise managed mode lets administrators enforce an extension allowlist.
+  </Card>
+</CardGroup>
+
+## Supported platforms
+
+Athas runs natively on:
+
+- **macOS** — Apple Silicon and Intel
+- **Linux** — x86_64
+- **Windows** — x86_64
+
+Download the latest release from the [GitHub releases page](https://github.com/athasdev/athas/releases).
+
+## Additional features
+
+Beyond the core editing loop, Athas includes:
+
+- **Syntax highlighting** via Tree-sitter, with grammar support for dozens of languages
+- **SQLite viewer** for browsing local databases without a separate tool
+- **External editor support** — open files in your preferred editor from within Athas
+- **GitHub integration** — view pull requests, issues, and Actions from the sidebar
+- **Enterprise policy controls** — managed mode and an extension allowlist for organizations
+
+## License and community
+
+Athas is open source under the [AGPL-3.0 license](https://github.com/athasdev/athas/blob/master/LICENSE). Contributions are welcome — see the [contributing guide](https://github.com/athasdev/athas/blob/master/CONTRIBUTING.md) for setup instructions and submission guidelines.
+
+Join the community:
+
+- [GitHub Issues](https://github.com/athasdev/athas/issues) — bug reports and feature requests
+- [GitHub Discussions](https://github.com/athasdev/athas/discussions) — questions and ideas
+- [Discord](https://discord.gg/DD8F38wFMv) — real-time community chat
